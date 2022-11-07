@@ -61,7 +61,7 @@ func reduction(beta float64, dBest, d D) D {
 }
 
 func main() {
-	e := 0.01
+	e := 0.0001
 	alpha, beta, gamma := 1.0, 0.5, 2.0
 	d1 := D{
 		x1: -1,
@@ -83,8 +83,6 @@ func main() {
 		f1 := d1.f()
 		f2 := d2.f()
 		f3 := d3.f()
-		//fmin := math.Min(f1, math.Min(f2, f3))
-		//fmax := math.Max(f1, math.Max(f2, f3))
 		switch fmin := math.Min(f1, math.Min(f2, f3)); fmin {
 		case f1:
 			dBest = d1
@@ -116,7 +114,9 @@ func main() {
 		}
 		refl := reflection(alpha, grav, dWorst)
 		if refl.f() < dBest.f() {
+			fmt.Println("Stretch")
 			dNew := stretch(gamma, grav, refl)
+			fmt.Println("New simplix")
 			if dNew.f() < dBest.f() {
 				dWorst = dNew
 			} else {
@@ -124,11 +124,14 @@ func main() {
 			}
 		} else {
 			if refl.f() <= dMiddle.f() {
+				fmt.Println("New simplix")
 				dWorst = refl
 			} else {
 				if refl.f() <= dWorst.f() {
+					fmt.Println("Compress")
 					dWorst = compress(beta, grav, dWorst)
 				} else {
+					fmt.Println("Reduction")
 					dWorst = reduction(beta, dBest, dWorst)
 					dMiddle = reduction(beta, dBest, dMiddle)
 				}
@@ -141,5 +144,6 @@ func main() {
 		fmt.Printf("f(xBest) = %.5f\n\n", dBest.f())
 	}
 	fmt.Println("Final answer: ")
+	fmt.Printf("xBest: %.5f\n", dBest)
 	fmt.Printf("f(xBest) = %.5f\n", dBest.f())
 }
